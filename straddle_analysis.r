@@ -103,7 +103,7 @@ historical_vol <- na.omit(sapply(price_Close, hist_vol))
 final_vol<- unlist(historical_vol[1,])
 final_vol <- as.data.frame(final_vol)
 #View(final_vol)
-
+x = rownames(final_vol) # look into this, "final_vol" was previously used, maybe "price_Close"
 ############################################################################################
 #### 3. Calculate implied vol for 30 DTE call and put ATM and average to get average IV ####
 require("RQuantLib"); require("quantmod"); require("lubridate"); require("jsonlite"); require("svMisc")
@@ -158,7 +158,6 @@ for (i in (x)){
 }
 
 # Get options chain data for all tickers
-x = rownames(final_vol)
 price = getQuote(x)
 chains = pblapply(x, getOptionChain)
 
@@ -250,3 +249,4 @@ final_vol$log_diff <- round((log(final_vol$final_vol) - log(final_vol$implied_av
 # Rank & sort tickers into a list of highest and lowest log differences
 final_vol <- final_vol[order(-final_vol$log_diff),]
 View(final_vol)
+
