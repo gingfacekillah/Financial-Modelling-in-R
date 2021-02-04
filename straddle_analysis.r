@@ -1,7 +1,7 @@
 #yahooQF() Great list of possible data pulls!
 #getQuote(tickers)
 
-
+## ** Work in progress ** ##
 ##########################################################################
 #### 1. Get a list of all optionable stock tickers from BarCharts.com ####
 require("httr");require("dplyr");require("purrr")
@@ -195,16 +195,16 @@ for (i in (x)){
 }
 
 ## Add put data to final_vol data frame ##
-# Call strikes
+# Put strikes
 for (i in (x)){
   final_vol[x, 'strike'] <- call_strikes
 }
-# Call prices
+# Put prices
 for (i in (x)){
   final_vol[x, 'call_price'] <- call_price
 }
 
-# Call implied volatility
+# Put implied volatility
 for (i in (x)){
   final_vol[x, 'call_implied'] <- call_implied_vol
 }
@@ -242,5 +242,4 @@ final_vol$implied_avg = ((final_vol$call_implied + final_vol$put_implied) /2)
 final_vol$log_diff <- round((log(final_vol$final_vol) - log(final_vol$implied_avg)),3)
 
 # Rank & sort tickers into a list of highest and lowest log differences
-
 
