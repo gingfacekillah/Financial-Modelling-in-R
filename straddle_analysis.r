@@ -44,7 +44,7 @@ data$tradeTime = as.POSIXct(data$tradeTime, origin="1970-01-01")
 
 # Extract ticker symbols
 tickers <- data$symbol
-tickers <- tickers[1:30]
+tickers <- tickers[1:100]
 
 # Remove data no longer needed to conserve computer memory
 # rm(data)
@@ -92,7 +92,7 @@ price_Close <- price_Close[-c(252),] %>%
 
 # Function to calculate historical annualized volatility for each ticker
 hist_vol <- function(x){
-  hvol <- volatility(x,calc='close',n=251,N=251)
+  hvol <- volatility(x,calc='close',n=nrow(price_Close),N=nrow(price_Close))
   hvol
 }
 
@@ -112,7 +112,8 @@ require("RQuantLib"); require("quantmod"); require("lubridate"); require("jsonli
 #final_vol$ticker <- rownames(final_vol)
 #rownames(final_vol) <- NULL
 final_vol$underlying_last <- rep(1, nrow(final_vol))
-final_vol$strike <- rep(1, nrow(final_vol))
+final_vol$call_strike <- rep(1, nrow(final_vol))
+final_vol$put_strike <- rep(1, nrow(final_vol))
 final_vol$dividend_yield <- rep(1, nrow(final_vol))
 final_vol$risk_freeRate <- rep(1, nrow(final_vol))
 final_vol$dte <- rep(1, nrow(final_vol))
@@ -124,7 +125,7 @@ final_vol$implied_avg <- rep(1, nrow(final_vol))
 final_vol$log_diff <- rep(1, nrow(final_vol))
 
 # Underlying last price
-underlying_last <- (price_Close[251,])
+underlying_last <- (price_Close[nrow(price_Close),]) # this number needs to adjust to changing row #
 final_vol$underlying_last <- unlist(underlying_last[1,])
 
 # Days to expiration
@@ -170,19 +171,21 @@ puts = pblapply(chains, function(x) x$puts)
 put_strike_list <- Map(function(cl, p) cl[which.min(abs(p - cl$Strike)), ], puts, price$Last)
 
 # Collect call data
+call_strike_list[sapply(call_strike_list, function(x) length(x)==0L)] <- NA
 call_strikes <- unlist(sapply(call_strike_list, function(x) x[1]))
 call_price <- unlist(sapply(call_strike_list, function(x) x[2]))
 call_implied_vol <- unlist(sapply(call_strike_list, function(x) x[9]))
 
 # Collect put data
+put_strike_list[sapply(put_strike_list, function(x) length(x)==0L)] <- NA
 put_strikes <- unlist(sapply(put_strike_list, function(x) x[1]))
-put_price <- unlist(apply(put_strike_list, function(x) x[2]))
+put_price <- unlist(sapply(put_strike_list, function(x) x[2]))
 put_implied_vol <- unlist(sapply(put_strike_list, function(x) x[9]))
 
 ## Add call data to final_vol data frame ##
 # Call strikes
 for (i in (x)){
-  final_vol[x, 'strike'] <- call_strikes
+  final_vol[x, 'call_strike'] <- call_strikes
 }
 # Call prices
 for (i in (x)){
@@ -197,43 +200,46 @@ for (i in (x)){
 ## Add put data to final_vol data frame ##
 # Put strikes
 for (i in (x)){
-  final_vol[x, 'strike'] <- call_strikes
+  final_vol[x, 'put_strike'] <- call_strikes
 }
 # Put prices
 for (i in (x)){
-  final_vol[x, 'call_price'] <- call_price
+  final_vol[x, 'put_price'] <- put_price
 }
 
 # Put implied volatility
 for (i in (x)){
-  final_vol[x, 'call_implied'] <- call_implied_vol
+  final_vol[x, 'put_implied'] <- put_implied_vol
 }
 
+# Remove NA rows from final_vol data frame
+final_vol <- drop_na(final_vol)
 
-# Call implied volatility
-final_vol$call_implied <- as.numeric(
-  AmericanOptionImpliedVolatility(type = "call",
-                                  underlying = final_vol$underlying_last,
-                                  strike = final_vol$strike,
-                                  dividendYield = final_vol$dividend_yield,
-                                  riskFreeRate = final_vol$risk_freeRate,
-                                  maturity = final_vol$dte,
-                                  volatility = 0.5,
-                                  value = final_vol$call_price))
 
-# Put implied volatility
-final_vol$put_implied <- as.numeric(
-  AmericanOptionImpliedVolatility(type = "put",
-                                  underlying = underlying,
-                                  strike = strike,
-                                  dividendYield = divY,
-                                  riskFreeRate = rF,
-                                  maturity = exp,
-                                  volatility = vol,
-                                  value = 3.92))
+# # Call implied volatility # generalize this and sapply through each row
+# final_vol$call_implied <- as.numeric(
+#   AmericanOptionImpliedVolatility(type = "call",
+#                                   underlying = final_vol$underlying_last,
+#                                   strike = final_vol$strike,
+#                                   dividendYield = final_vol$dividend_yield,
+#                                   riskFreeRate = final_vol$risk_freeRate,
+#                                   maturity = final_vol$dte,
+#                                   volatility = 0.5,
+#                                   value = final_vol$call_price))
+# 
+# # Put implied volatility # generalize this and sapply through each row
+# final_vol$put_implied <- as.numeric(
+#   AmericanOptionImpliedVolatility(type = "put",
+#                                   underlying = underlying,
+#                                   strike = strike,
+#                                   dividendYield = divY,
+#                                   riskFreeRate = rF,
+#                                   maturity = exp,
+#                                   volatility = vol,
+#                                   value = 3.92))
 
 # Average call & put implied volatility
-final_vol$implied_avg = ((final_vol$call_implied + final_vol$put_implied) /2)
+final_vol$implied_avg = round(((final_vol$call_implied + final_vol$put_implied) /2),4)
 
 ######################################################
 #### 4. Compare log differences between HV and IV ####
@@ -242,4 +248,5 @@ final_vol$implied_avg = ((final_vol$call_implied + final_vol$put_implied) /2)
 final_vol$log_diff <- round((log(final_vol$final_vol) - log(final_vol$implied_avg)),3)
 
 # Rank & sort tickers into a list of highest and lowest log differences
-
+final_vol <- final_vol[order(-final_vol$log_diff),]
+View(final_vol)
