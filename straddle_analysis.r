@@ -1,7 +1,6 @@
 #yahooQF() Great list of possible data pulls!
 #getQuote(tickers)
 
-## ** Work in Progress ** ##
 
 ##########################################################################
 #### 1. Get a list of all optionable stock tickers from BarCharts.com ####
@@ -45,6 +44,7 @@ data$tradeTime = as.POSIXct(data$tradeTime, origin="1970-01-01")
 
 # Extract ticker symbols
 tickers <- data$symbol
+tickers <- tickers[1:30]
 
 # Remove data no longer needed to conserve computer memory
 # rm(data)
@@ -92,7 +92,7 @@ price_Close <- price_Close[-c(252),] %>%
 
 # Function to calculate historical annualized volatility for each ticker
 hist_vol <- function(x){
-  hvol <- volatility(x,calc='close',n=252,N=252)
+  hvol <- volatility(x,calc='close',n=251,N=251)
   hvol
 }
 
@@ -121,15 +121,14 @@ final_vol$put_price <- rep(1, nrow(final_vol))
 final_vol$call_implied <- rep(1, nrow(final_vol))
 final_vol$put_implied <- rep(1, nrow(final_vol))
 final_vol$implied_avg <- rep(1, nrow(final_vol))
-final_vol$oc_implied <- rep(1, nrow(final_vol))
 final_vol$log_diff <- rep(1, nrow(final_vol))
 
 # Underlying last price
-underlying_last <- (price_Close[252,])
+underlying_last <- (price_Close[251,])
 final_vol$underlying_last <- unlist(underlying_last[1,])
 
 # Days to expiration
-expiration = as.Date("2021-02-19")
+expiration = as.Date("2021-02-05")
 TODAY = Sys.Date()
 days2exp = as.numeric(expiration - TODAY)
 exp = yearFraction(startDates = TODAY, endDates = expiration, dayCounters = 1)
@@ -141,43 +140,58 @@ treas = na.locf(DGS10)/100/360
 final_vol$risk_freeRate = sum(rep(last(treas), days2exp))
 
 # Get options chain data for all tickers
-x <- c(rownames(final_vol))
-for(i in (x)){
-    grab <- getOptionChain(x)
-    print(i)
-    # Get underlying last price from final_vol data frame
-    lp <- final_vol[x, 'underlying_last'] 
-    
-    #Find the closest ATM strike price to underlying last price
-    z <- which.min(abs(grab$calls$Strike - lp))
-    pulled_oc <- grab$calls[z,]
+x = rownames(final_vol)
+price = getQuote(x)
+chains = pblapply(x, getOptionChain)
 
-    # Update final_vol data frame with pulled values
-    final_vol[x, 'strike'] <- pulled_oc$Strike
-    final_vol[x, 'call_price'] <- pulled_oc$Last
-    final_vol[x, 'oc_implied'] <- pulled_oc$IV
-  }
+# Call ATM strikes
+calls = pblapply(chains, function(x) x$calls)
+call_strike_list <- Map(function(cl, p) cl[which.min(abs(p - cl$Strike)), ], calls, price$Last)
 
-# loop for all tickers
-pblapply(x, pull_data)
+# Put ATM strikes
+puts = pblapply(chains, function(x) x$puts)
+put_strike_list <- Map(function(cl, p) cl[which.min(abs(p - cl$Strike)), ], puts, price$Last)
 
-# Dividend yield
-opt_lastPrice <- function(x){
-  q = yahooQF(c("Dividend Yield", "Last Trade (Price Only)"))
-  lastPrice = getQuote(opt_tickers, what = q)
-  lastPrice$Last
+# Collect call data
+call_strikes <- unlist(sapply(call_strike_list, function(x) x[1]))
+call_price <- unlist(sapply(call_strike_list, function(x) x[2]))
+call_implied_vol <- unlist(sapply(call_strike_list, function(x) x[9]))
+
+# Collect put data
+put_strikes <- unlist(sapply(put_strike_list, function(x) x[1]))
+put_price <- unlist(apply(put_strike_list, function(x) x[2]))
+put_implied_vol <- unlist(sapply(put_strike_list, function(x) x[9]))
+
+## Add call data to final_vol data frame ##
+# Update final_vol data frame with pulled ATM strike value
+for (i in (x)){
+  final_vol[x, 'strike'] <- call_strikes
+}
+# Update final_vol data frame with pulled ATM strike value
+for (i in (x)){
+  final_vol[x, 'call_price'] <- call_price
+}
+# Update final_vol data frame with pulled ATM strike value
+for (i in (x)){
+  final_vol[x, 'call_implied'] <- call_implied_vol
 }
 
-ticker = "AAPL"
-q = yahooQF(c("Dividend Yield"))
-stk = getQuote(ticker, what = q)
-divY = stk$'Dividend Yield'
+# Collect dividend yield data
+opt_divYield <- function(x){
+  q = yahooQF(c("Dividend Yield"))
+  div = getQuote(x, what = q)
+  div$'Dividend Yield'
+}
 
-# Call price
+# Dividend Yield - NA's replaced with zero
+divY <- pblapply(x, opt_divYield)
+DivYield <- unlist(sapply(divY, function(x) x[1]))
+DivYield[is.na(DivYield)] = 0
 
-# Put price
-
-
+# Update final_vol data frame with pulled dividend yield values
+for (i in (x)){
+  final_vol[x, 'dividend_yield'] <- DivYield
+}
 
 # Call implied volatility
 final_vol$call_implied <- as.numeric(
@@ -211,3 +225,5 @@ final_vol$implied_avg = ((final_vol$call_implied + final_vol$put_implied) /2)
 final_vol$log_diff <- round((log(final_vol$final_vol) - log(final_vol$implied_avg)),3)
 
 # Rank & sort tickers into a list of highest and lowest log differences
+
+
