@@ -128,7 +128,7 @@ underlying_last <- (price_Close[251,])
 final_vol$underlying_last <- unlist(underlying_last[1,])
 
 # Days to expiration
-expiration = as.Date("2021-02-05")
+expiration = as.Date("2021-02-05") # collect the 30 DTE date here, parsed from options chain
 TODAY = Sys.Date()
 days2exp = as.numeric(expiration - TODAY)
 exp = yearFraction(startDates = TODAY, endDates = expiration, dayCounters = 1)
@@ -138,6 +138,23 @@ final_vol$dte <- exp
 getSymbols.FRED("DGS10", env = .GlobalEnv)
 treas = na.locf(DGS10)/100/360
 final_vol$risk_freeRate = sum(rep(last(treas), days2exp))
+
+# Collect dividend yield data
+opt_divYield <- function(x){
+  q = yahooQF(c("Dividend Yield"))
+  div = getQuote(x, what = q)
+  div$'Dividend Yield'
+}
+
+# Dividend yield - NA's replaced with zero
+divY <- pblapply(x, opt_divYield)
+DivYield <- unlist(sapply(divY, function(x) x[1]))
+DivYield[is.na(DivYield)] = 0
+
+# Update final_vol data frame with pulled dividend yield values
+for (i in (x)){
+  final_vol[x, 'dividend_yield'] <- DivYield
+}
 
 # Get options chain data for all tickers
 x = rownames(final_vol)
@@ -163,35 +180,35 @@ put_price <- unlist(apply(put_strike_list, function(x) x[2]))
 put_implied_vol <- unlist(sapply(put_strike_list, function(x) x[9]))
 
 ## Add call data to final_vol data frame ##
-# Update final_vol data frame with pulled ATM strike value
+# Call strikes
 for (i in (x)){
   final_vol[x, 'strike'] <- call_strikes
 }
-# Update final_vol data frame with pulled ATM strike value
+# Call prices
 for (i in (x)){
   final_vol[x, 'call_price'] <- call_price
 }
-# Update final_vol data frame with pulled ATM strike value
+
+# Call implied volatility
 for (i in (x)){
   final_vol[x, 'call_implied'] <- call_implied_vol
 }
 
-# Collect dividend yield data
-opt_divYield <- function(x){
-  q = yahooQF(c("Dividend Yield"))
-  div = getQuote(x, what = q)
-  div$'Dividend Yield'
-}
-
-# Dividend Yield - NA's replaced with zero
-divY <- pblapply(x, opt_divYield)
-DivYield <- unlist(sapply(divY, function(x) x[1]))
-DivYield[is.na(DivYield)] = 0
-
-# Update final_vol data frame with pulled dividend yield values
+## Add put data to final_vol data frame ##
+# Call strikes
 for (i in (x)){
-  final_vol[x, 'dividend_yield'] <- DivYield
+  final_vol[x, 'strike'] <- call_strikes
 }
+# Call prices
+for (i in (x)){
+  final_vol[x, 'call_price'] <- call_price
+}
+
+# Call implied volatility
+for (i in (x)){
+  final_vol[x, 'call_implied'] <- call_implied_vol
+}
+
 
 # Call implied volatility
 final_vol$call_implied <- as.numeric(
