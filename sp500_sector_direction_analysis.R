@@ -23,7 +23,7 @@ tickers = c("SPY",  # s&p 500 index
             "XLI",  # industrials
             "XLB",  # materials
             "XLRE", # real estate
-            "XLK",  #technology
+            "XLK",  # technology
             "XLU",  # utilities
             "QQQ")  # nasdaq 100 index
 
