@@ -45,7 +45,7 @@ prices_adj <- map(tickers, getTickerData) %>% map(Ad) %>% reduce(merge.xts) # It
 names(prices_adj) <- tickers
 
 
-#### 4. Calculate Historical Annualized Volatility ####
+#### 4. Calculate historical annualized volatility
 hist_vol <- function(x){
   hvol <- volatility(x,calc='close',n=7,N=nrow(prices_adj))
   hvol
