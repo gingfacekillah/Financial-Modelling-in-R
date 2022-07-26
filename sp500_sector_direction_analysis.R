@@ -320,7 +320,7 @@ put_avg_vrp <- mean(master_volChart$put_vol_premium)
 put_median_vrp <- median(master_volChart$put_vol_premium)
 master_volChart$put_relative_value <- percent(volMed-master_volChart$put_vol_premium)
 
-# Calculate the options greeks for calls
+# Calculate the options greeks for puts
 S=master_volChart$underlying
 X=master_volChart$put_strike
 v = master_volChart$put_implied_vol
