@@ -1,4 +1,4 @@
-# Volatility Trading Analysis in R | Andrew Mack @gingfacekillah
+# Volatility Trading Analysis in R | Andrew Mack @Gingfacekillah
 
 # Using a number of methods from Euan Sinclair's book "Volatility Trading" to estimate historical
 # volatility and then using this estimate to forecast volatility looking forward.
