@@ -17,7 +17,7 @@ stock_data <- map(ticker, getTickerData) %>% map(Ad) %>% reduce(merge.xts)
 stock_data<- as.data.frame(stock_data)
 names(stock_data) <- ticker
 
-# Log prices
+### -- Calculate momentum rank
 stock_data <- stock_data %>%
     as.data.frame() %>%
     mutate(ln_price = log(stock_data)) %>%
