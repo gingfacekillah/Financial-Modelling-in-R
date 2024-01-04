@@ -9,9 +9,12 @@ library(tidyverse)
 ### -- Select tickers
 ticker <- c("AMD", "NVDA", "AMZN")
 
-### -- Get data with quantmod
+### -- Create empty dataframe to store results
 clenow_scanner <- data.frame()
+
+### -- Function to get data and perform ranking
 for (ticker in ticker){
+### -- Get data with quantmod
 getTickerData <- function(x){
     getSymbols(x, src = "yahoo", from = Sys.Date() - 400, to = Sys.Date(), auto.assign = FALSE)}
 stock_data <- map(ticker, getTickerData) %>% map(Ad) %>% reduce(merge.xts)
