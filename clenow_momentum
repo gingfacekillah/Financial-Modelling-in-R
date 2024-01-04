@@ -6,9 +6,10 @@ library(quantmod)
 library(TTR)
 library(tidyverse)
 
-
+### -- Select tickers
 ticker <- c("AMD", "NVDA", "AMZN")
 
+### -- Get data with quantmod
 clenow_scanner <- data.frame()
 for (ticker in ticker){
 getTickerData <- function(x){
