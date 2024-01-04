@@ -3,14 +3,9 @@
 ### -- Libraries
 library(zoo)
 library(quantmod)
-library(ggplot2)
 library(TTR)
 library(tidyverse)
-library(RQuantLib)
-library(derivmkts)
-library(pbapply)
-library(readr)
-library(lubridate)
+
 
 ticker <- c("AMD", "NVDA", "AMZN")
 
