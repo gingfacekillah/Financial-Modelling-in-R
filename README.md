@@ -10,3 +10,5 @@ A collection of scripts for modelling financial markets and options in R.
 4. Heston Stochastic Vol - Heston stochastic volatility model from NMOF package by Enrico Schumann, for further experimentation
 
 5. Bayesian Hurst - Estimate the Hurst exponent using MCMC for different time periods
+
+6. Rolling Volatility Estimation - Comparing close-close with volatility estimation models on different rolling time windows
