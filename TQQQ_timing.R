@@ -227,15 +227,15 @@ Performance_xts <- function(x) {
                      "Win %", "Annualized Volatility", "Maximum Drawdown", "Max Length Drawdown")
     return(Perf)
 }
-#-- Create SPX returns, convert to xts
+#-- Create TQQQ returns, convert to xts
 tqqq_returns_df <- data.frame(date = as.Date(rownames(predict_data)), tqqq_returns = predict_data$returns)
 tqqq_returns_xts <- xts(tqqq_returns_df$tqqq_returns, order.by = as.Date(tqqq_returns_df$date))
 qqq_returns_xts <- xts(qqq_returns$daily.returns)
 
-#-- Calculate performance metrics for My Strategy and SPX
+#-- Calculate performance metrics for My Strategy and QQQ/TQQQ
 myReturns_xts <- xts(returns$strategy_return, order.by = returns$date)
 cbind(Mack = Performance_xts(myReturns_xts), TQQQ = Performance_xts(tqqq_returns_xts), QQQ = Performance_xts(qqq_returns_xts))
-#-- Plot cumulative strategy returns along with benchmark (e.g., S&P 500)
+#-- Plots
 colnames(myReturns_xts) <- "Mack_Timing_Strategy"
 colnames(tqqq_returns_xts) <- "TQQQ_Buy_Hold"
 colnames(qqq_returns_xts) <- "QQQ_Buy_Hold"
