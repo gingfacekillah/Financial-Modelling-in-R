@@ -14,3 +14,5 @@ A collection of scripts for modelling financial markets and options in R.
 6. Rolling Volatility Estimation - Comparing close-close with volatility estimation models on different rolling time windows
 
 7. Clenow Momentum - Andreas Clenow's Momentum ranking methodology from the book "Stocks on the Move"
+
+8. TQQQ Timing - Using machine learning with technical indicators to time going long TQQQ
