@@ -7,7 +7,6 @@ suppressPackageStartupMessages({
     library(quantmod)               # stock data & technical analysis
     library(tidymodels)             # Tidymodels
     library(tidyverse)              # Core tidyverse functions
-    library(tidymodels)             # Tidymodels
     library(usemodels)              # Template code suggestions for ML models
     library(corrr)                  # Correlation
     library(ggplot2)                # Plots
@@ -19,7 +18,6 @@ suppressPackageStartupMessages({
     library(dials)                  # Adjustments
     library(yardstick)              # Evaluation metrics
     library(vip)                    # Variable importance
-    library(MASS)                   # Sample data
     library(shapviz)                # Shap charts
     library(lubridate)              # Dates & times wrangling
     library(zoo)                    # Rollmeans & cumsum
