@@ -11,8 +11,7 @@ suppressPackageStartupMessages({
     library(usemodels)              # Template code suggestions for ML models
     library(corrr)                  # Correlation
     library(ggplot2)                # Plots
-    library(parsnip)                # ML Engines (random forest, KNN, xgBoost)
-    library(bonsai)                 # ML Engines (LightGBM)
+    library(parsnip)                # ML Engines (random forest)
     library(workflows)              # Modeling workflows
     library(recipes)                # Preprocessing recipes
     library(rsample)                # Resampling
