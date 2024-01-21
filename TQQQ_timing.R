@@ -232,7 +232,7 @@ tqqq_returns_df <- data.frame(date = as.Date(rownames(predict_data)), tqqq_retur
 tqqq_returns_xts <- xts(tqqq_returns_df$tqqq_returns, order.by = as.Date(tqqq_returns_df$date))
 qqq_returns_xts <- xts(qqq_returns$daily.returns)
 
-#-- Calculate performance metrics for My Strategy and QQQ/TQQQ
+#-- Calculate performance metrics for strategy vs QQQ/TQQQ
 myReturns_xts <- xts(returns$strategy_return, order.by = returns$date)
 cbind(Mack = Performance_xts(myReturns_xts), TQQQ = Performance_xts(tqqq_returns_xts), QQQ = Performance_xts(qqq_returns_xts))
 #-- Plots
