@@ -7,7 +7,6 @@ suppressPackageStartupMessages({
     library(quantmod)               # stock data & technical analysis
     library(tidymodels)             # Tidymodels
     library(tidyverse)              # Core tidyverse functions
-    library(usemodels)              # Template code suggestions for ML models
     library(corrr)                  # Correlation
     library(ggplot2)                # Plots
     library(parsnip)                # ML Engines (random forest)
