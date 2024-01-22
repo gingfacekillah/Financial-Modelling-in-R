@@ -1,6 +1,11 @@
 # TQQQ Timing with technical indicators | @Gingfacekillah
 ### -- Long only, no shorting with PSQ
 
+### -- Potentially some lookahead bias induced by train/test split & resampling method
+### -- Try initial-time_split() & sliding_window() instead
+### -- df_split <- initial_time_split(data)
+### -- data_resamples <- sliding_window(model_train, lookback = 1, assess_stop = 1)
+
 # Suppress all package startup messages
 suppressPackageStartupMessages({
     library(PerformanceAnalytics)   # Strategy backtesting metrics
