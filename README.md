@@ -18,3 +18,5 @@ A collection of scripts for modelling financial markets and options in R.
 8. TQQQ Timing - Using machine learning with technical indicators to time going long TQQQ
 
 9.  Technical Analysis - Looking at correlation between various TA and next day's O2C log returns
+
+10.  Qullamaggie Scanner - A stock scanner roughly based on the work of Kristjan Kullamägi
