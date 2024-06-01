@@ -16,3 +16,5 @@ A collection of scripts for modelling financial markets and options in R.
 7. Clenow Momentum - Andreas Clenow's Momentum ranking methodology from the book "Stocks on the Move"
 
 8. TQQQ Timing - Using machine learning with technical indicators to time going long TQQQ
+
+9.  Technical Analysis - Looking at correlation between various TA and next day's O2C log returns
