@@ -167,7 +167,7 @@ top_decile_1M <- quantile(joined_df$return1M, 0.9, na.rm = TRUE)
 top_decile_3M <- quantile(joined_df$return3M, 0.9, na.rm = TRUE)
 top_decile_6M <- quantile(joined_df$return6M, 0.9, na.rm = TRUE)
 
-quallamaggie_scan <- joined_df %>%
+qullamaggie_scan <- joined_df %>%
     filter(dollarVolume > 5, ADR_20 > 5) %>% # More than 5 million in dollar volume, more than 5% ADR20
     filter(return1M >= top_decile_1M | return3M >= top_decile_3M | return6M >= top_decile_6M) # Looking for 1/3/6 month gainers
 
