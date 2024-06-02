@@ -9,7 +9,7 @@ library(zoo)
 # weekly_tickers <- read.csv("weeklyTickers.csv") # Load your tickers as a vector
 weekly_tickers <- c("AAPL", "AMD", "NVDA", "AMZN") # Example
 
-# Get today's date and calculate the start date (252 days back)
+# Get today's date and calculate the start date (400 days back)
 end_date <- Sys.Date()
 start_date <- end_date - 400
 
