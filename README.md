@@ -20,3 +20,7 @@ A collection of scripts for modelling financial markets and options in R.
 9.  Technical Analysis - Looking at correlation between various TA and next day's O2C log returns
 
 10.  Qullamaggie Scanner - A stock scanner roughly based on the work of Kristjan Kullamägi
+
+11.  Heston Sim - Heston Stochastic model for simulating volatility/stock prices
+
+12.  Jump-Diffusion Sim - Jump-Diffusion model for simulating volatility/stock prices
