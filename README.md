@@ -26,3 +26,5 @@ A collection of scripts for modelling financial markets and options in R.
 12.  Jump-Diffusion Sim - Jump-Diffusion model for simulating volatility/stock prices
 
 13.  American Option Pricing - Different methods for estimating American option prices: binomial trees, least squares monte carlo, finite difference method
+
+14.  Heston Full Fit - Fitting Heston model parameters & simulating stock prices with it
