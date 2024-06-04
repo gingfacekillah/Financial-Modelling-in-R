@@ -89,7 +89,7 @@ kappa <- calibrated_params_de[1]
 theta <- calibrated_params_de[2]
 sigma_v <- calibrated_params_de[3]
 rho <- calibrated_params_de[4]
-T <- 4/252  # 1 year
+T <- 4/252  # Time as days to simulate (% of 1 year)
 n_paths <- 10000
 
 # Simulate future stock prices using the calibrated Heston model
