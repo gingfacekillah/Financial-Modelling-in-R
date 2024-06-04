@@ -61,7 +61,6 @@ result_de <- DEoptim(objective_function, lower = lower_bounds, upper = upper_bou
 
 # Extract calibrated params
 calibrated_params_de <- result_de$optim$bestmem
-cat("Calibrated Parameters (DE):\n")
 print(calibrated_params_de)
 
 # Step 5: Simulation model
