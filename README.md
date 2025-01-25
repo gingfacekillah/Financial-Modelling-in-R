@@ -30,3 +30,5 @@ A collection of scripts for modelling financial markets and options in R.
 14.  Heston Full Fit - Fitting Heston model parameters & simulating stock prices with it
 
 15.  Particle Filter - Simple particle filter model & strategy with Bayesian optimization of model parameters
+
+16.  Single Factor Momentum - A recreation of a paper using polynomial regressions to model single factor momentum in SP500 stocks
